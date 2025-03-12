@@ -75,6 +75,9 @@ class ChatViewModel @Inject constructor(
     private val _groqLoadingState = MutableStateFlow<LoadingState>(LoadingState.Idle)
     val groqLoadingState = _groqLoadingState.asStateFlow()
 
+    private val _deepSeekLoadingState = MutableStateFlow<LoadingState>(LoadingState.Idle)
+    val deepSeekLoadingState = _deepSeekLoadingState.asStateFlow()
+
     private val _ollamaLoadingState = MutableStateFlow<LoadingState>(LoadingState.Idle)
     val ollamaLoadingState = _ollamaLoadingState.asStateFlow()
 
@@ -107,6 +110,9 @@ class ChatViewModel @Inject constructor(
     private val _groqMessage = MutableStateFlow(Message(chatId = chatRoomId, content = "", platformType = ApiType.GROQ))
     val groqMessage = _groqMessage.asStateFlow()
 
+    private val _deepSeekMessage = MutableStateFlow(Message(chatId = chatRoomId, content = "", platformType = ApiType.DEEPSEEK))
+    val deepSeekMessage = _deepSeekMessage.asStateFlow()
+
     private val _ollamaMessage = MutableStateFlow(Message(chatId = chatRoomId, content = "", platformType = ApiType.OLLAMA))
     val ollamaMessage = _ollamaMessage.asStateFlow()
 
@@ -118,6 +124,7 @@ class ChatViewModel @Inject constructor(
     private val anthropicFlow = MutableSharedFlow<ApiState>()
     private val googleFlow = MutableSharedFlow<ApiState>()
     private val groqFlow = MutableSharedFlow<ApiState>()
+    private val deepSeekFlow = MutableSharedFlow<ApiState>()
     private val ollamaFlow = MutableSharedFlow<ApiState>()
     private val geminiNanoFlow = MutableSharedFlow<ApiState>()
 
@@ -210,6 +217,11 @@ class ChatViewModel @Inject constructor(
                 completeGroqChat()
             }
 
+            ApiType.DEEPSEEK -> {
+                _deepSeekMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
+                completeDeepSeekChat()
+            }
+
             ApiType.OLLAMA -> {
                 _ollamaMessage.update { it.copy(id = message.id, content = "", createdAt = currentTimeStamp) }
                 completeOllamaChat()
@@ -292,6 +304,10 @@ class ChatViewModel @Inject constructor(
             completeGroqChat()
         }
 
+        if (ApiType.DEEPSEEK in enabledPlatforms) {
+            completeDeepSeekChat()
+        }
+
         if (ApiType.OLLAMA in enabledPlatforms) {
             completeOllamaChat()
         }
@@ -315,6 +331,13 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             val chatFlow = chatRepository.completeGroqChat(question = _userMessage.value, history = _messages.value)
             chatFlow.collect { chunk -> groqFlow.emit(chunk) }
+        }
+    }
+
+    private fun completeDeepSeekChat() {
+        viewModelScope.launch {
+            val chatFlow = chatRepository.completeDeepSeekChat(question = _userMessage.value, history = _messages.value)
+            chatFlow.collect { chunk -> deepSeekFlow.emit(chunk) }
         }
     }
 
@@ -397,6 +420,13 @@ class ChatViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            deepSeekFlow.handleStates(
+                messageFlow = _deepSeekMessage,
+                onLoadingComplete = { updateLoadingState(ApiType.DEEPSEEK, LoadingState.Idle) }
+            )
+        }
+
+        viewModelScope.launch {
             ollamaFlow.handleStates(
                 messageFlow = _ollamaMessage,
                 onLoadingComplete = { updateLoadingState(ApiType.OLLAMA, LoadingState.Idle) }
@@ -433,6 +463,7 @@ class ChatViewModel @Inject constructor(
             ApiType.ANTHROPIC -> _anthropicLoadingState
             ApiType.GOOGLE -> _googleLoadingState
             ApiType.GROQ -> _groqLoadingState
+            ApiType.DEEPSEEK -> _deepSeekLoadingState
             ApiType.OLLAMA -> _ollamaLoadingState
         }
 
@@ -444,6 +475,7 @@ class ChatViewModel @Inject constructor(
             ApiType.ANTHROPIC -> _anthropicMessage.update { message }
             ApiType.GOOGLE -> _googleMessage.update { message }
             ApiType.GROQ -> _groqMessage.update { message }
+            ApiType.DEEPSEEK -> _deepSeekMessage.update { message }
             ApiType.OLLAMA -> _ollamaMessage.update { message }
         }
     }
@@ -468,6 +500,10 @@ class ChatViewModel @Inject constructor(
             addMessage(_groqMessage.value)
         }
 
+        if (ApiType.DEEPSEEK in enabledPlatforms) {
+            addMessage(_deepSeekMessage.value)
+        }
+
         if (ApiType.OLLAMA in enabledPlatforms) {
             addMessage(_ollamaMessage.value)
         }
@@ -479,6 +515,7 @@ class ChatViewModel @Inject constructor(
             ApiType.ANTHROPIC -> _anthropicLoadingState.update { loadingState }
             ApiType.GOOGLE -> _googleLoadingState.update { loadingState }
             ApiType.GROQ -> _groqLoadingState.update { loadingState }
+            ApiType.DEEPSEEK -> _deepSeekLoadingState.update { loadingState }
             ApiType.OLLAMA -> _ollamaLoadingState.update { loadingState }
         }
 
@@ -489,6 +526,7 @@ class ChatViewModel @Inject constructor(
                 ApiType.ANTHROPIC -> _anthropicLoadingState
                 ApiType.GOOGLE -> _googleLoadingState
                 ApiType.GROQ -> _groqLoadingState
+                ApiType.DEEPSEEK -> _deepSeekLoadingState
                 ApiType.OLLAMA -> _ollamaLoadingState
             }
 

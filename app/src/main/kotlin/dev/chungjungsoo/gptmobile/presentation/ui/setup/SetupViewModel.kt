@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.chungjungsoo.gptmobile.data.ModelConstants.anthropicModels
+import dev.chungjungsoo.gptmobile.data.ModelConstants.deepseekModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.googleModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.groqModels
 import dev.chungjungsoo.gptmobile.data.ModelConstants.ollamaModels
@@ -28,6 +29,7 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
             Platform(ApiType.ANTHROPIC),
             Platform(ApiType.GOOGLE),
             Platform(ApiType.GROQ),
+            Platform(ApiType.DEEPSEEK),
             Platform(ApiType.OLLAMA)
         )
     )
@@ -158,6 +160,7 @@ class SetupViewModel @Inject constructor(private val settingRepository: SettingR
             ApiType.ANTHROPIC -> anthropicModels
             ApiType.GOOGLE -> googleModels
             ApiType.GROQ -> groqModels
+            ApiType.DEEPSEEK -> deepseekModels
             ApiType.OLLAMA -> ollamaModels
         }.toList()
 

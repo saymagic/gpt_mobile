@@ -50,6 +50,7 @@ class ChatRepositoryImpl @Inject constructor(
     private lateinit var google: GenerativeModel
     private lateinit var ollama: OpenAI
     private lateinit var groq: OpenAI
+    private lateinit var deepseek: OpenAI
 
     override suspend fun completeOpenAIChat(question: Message, history: List<Message>): Flow<ApiState> {
         val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.OPENAI })
@@ -145,6 +146,28 @@ class ChatRepositoryImpl @Inject constructor(
         )
 
         return groq.chatCompletions(chatCompletionRequest)
+            .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices.getOrNull(0)?.delta?.content ?: "") }
+            .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
+            .onStart { emit(ApiState.Loading) }
+            .onCompletion { emit(ApiState.Done) }
+    }
+
+    override suspend fun completeDeepSeekChat(question: Message, history: List<Message>): Flow<ApiState> {
+        val platform = checkNotNull(settingRepository.fetchPlatforms().firstOrNull { it.name == ApiType.DEEPSEEK })
+        deepseek = OpenAI(platform.token ?: "", host = OpenAIHost(baseUrl = platform.apiUrl))
+
+        val generatedMessages = messageToOpenAICompatibleMessage(ApiType.DEEPSEEK, history + listOf(question))
+        val generatedMessageWithPrompt = listOf(
+            ChatMessage(role = ChatRole.System, content = platform.systemPrompt ?: ModelConstants.DEFAULT_PROMPT)
+        ) + generatedMessages
+        val chatCompletionRequest = ChatCompletionRequest(
+            model = ModelId(platform.model ?: ""),
+            messages = generatedMessageWithPrompt,
+            temperature = platform.temperature?.toDouble(),
+            topP = platform.topP?.toDouble()
+        )
+
+        return deepseek.chatCompletions(chatCompletionRequest)
             .map<ChatCompletionChunk, ApiState> { chunk -> ApiState.Success(chunk.choices.getOrNull(0)?.delta?.content ?: "") }
             .catch { throwable -> emit(ApiState.Error(throwable.message ?: "Unknown error")) }
             .onStart { emit(ApiState.Loading) }

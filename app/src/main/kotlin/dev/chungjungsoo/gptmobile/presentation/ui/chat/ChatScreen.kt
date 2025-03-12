@@ -124,6 +124,7 @@ fun ChatScreen(
     val anthropicLoadingState by chatViewModel.anthropicLoadingState.collectAsStateWithLifecycle()
     val googleLoadingState by chatViewModel.googleLoadingState.collectAsStateWithLifecycle()
     val groqLoadingState by chatViewModel.groqLoadingState.collectAsStateWithLifecycle()
+    val deepSeekLoadingState by chatViewModel.deepSeekLoadingState.collectAsStateWithLifecycle()
     val ollamaLoadingState by chatViewModel.ollamaLoadingState.collectAsStateWithLifecycle()
     val geminiNanoLoadingState by chatViewModel.geminiNanoLoadingState.collectAsStateWithLifecycle()
     val userMessage by chatViewModel.userMessage.collectAsStateWithLifecycle()
@@ -131,6 +132,7 @@ fun ChatScreen(
     val anthropicMessage by chatViewModel.anthropicMessage.collectAsStateWithLifecycle()
     val googleMessage by chatViewModel.googleMessage.collectAsStateWithLifecycle()
     val groqMessage by chatViewModel.groqMessage.collectAsStateWithLifecycle()
+    val deepSeekMessage by chatViewModel.deepSeekMessage.collectAsStateWithLifecycle()
     val ollamaMessage by chatViewModel.ollamaMessage.collectAsStateWithLifecycle()
     val geminiNano by chatViewModel.geminiNanoMessage.collectAsStateWithLifecycle()
     val canUseChat = (chatViewModel.enabledPlatformsInChat.toSet() - appEnabledPlatforms.toSet()).isEmpty()
@@ -278,6 +280,7 @@ fun ChatScreen(
                                 ApiType.ANTHROPIC -> anthropicMessage
                                 ApiType.GOOGLE -> googleMessage
                                 ApiType.GROQ -> groqMessage
+                                ApiType.DEEPSEEK -> deepSeekMessage
                                 ApiType.OLLAMA -> ollamaMessage
                             }
 
@@ -286,6 +289,7 @@ fun ChatScreen(
                                 ApiType.ANTHROPIC -> anthropicLoadingState
                                 ApiType.GOOGLE -> googleLoadingState
                                 ApiType.GROQ -> groqLoadingState
+                                ApiType.DEEPSEEK -> deepSeekLoadingState
                                 ApiType.OLLAMA -> ollamaLoadingState
                             }
 

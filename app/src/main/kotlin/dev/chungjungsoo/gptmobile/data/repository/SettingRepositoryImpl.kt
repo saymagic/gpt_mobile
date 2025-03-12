@@ -20,6 +20,7 @@ class SettingRepositoryImpl @Inject constructor(
             ApiType.ANTHROPIC -> settingDataSource.getAPIUrl(apiType) ?: ModelConstants.ANTHROPIC_API_URL
             ApiType.GOOGLE -> settingDataSource.getAPIUrl(apiType) ?: ModelConstants.GOOGLE_API_URL
             ApiType.GROQ -> settingDataSource.getAPIUrl(apiType) ?: ModelConstants.GROQ_API_URL
+            ApiType.DEEPSEEK -> settingDataSource.getAPIUrl(apiType) ?: ModelConstants.DEEPSEEK_API_URL
             ApiType.OLLAMA -> settingDataSource.getAPIUrl(apiType) ?: ""
         }
         val token = settingDataSource.getToken(apiType)
@@ -31,6 +32,7 @@ class SettingRepositoryImpl @Inject constructor(
             ApiType.ANTHROPIC -> settingDataSource.getSystemPrompt(ApiType.ANTHROPIC) ?: ModelConstants.DEFAULT_PROMPT
             ApiType.GOOGLE -> settingDataSource.getSystemPrompt(ApiType.GOOGLE) ?: ModelConstants.DEFAULT_PROMPT
             ApiType.GROQ -> settingDataSource.getSystemPrompt(ApiType.GROQ) ?: ModelConstants.DEFAULT_PROMPT
+            ApiType.DEEPSEEK -> settingDataSource.getSystemPrompt(ApiType.DEEPSEEK) ?: ModelConstants.DEFAULT_PROMPT
             ApiType.OLLAMA -> settingDataSource.getSystemPrompt(ApiType.OLLAMA) ?: ModelConstants.DEFAULT_PROMPT
         }
 

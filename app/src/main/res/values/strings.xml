@@ -191,4 +191,16 @@
     <string name="edit_question">Edit User Message</string>
     <string name="user_message">User Message</string>
     <string name="export_chat">Export Chat</string>
+    <string name="select_deepseek_model">Select DeepSeek Chat Model</string>
+    <string name="select_deepseek_model_description">Use DeepSeek for fast, accurate, intelligent search solutions.</string>
+    <string name="deepseek">DeepSeek</string>
+    <string name="deepseek_description">Advanced AI for intelligent search.</string>
+    <string name="deepseek_api_key">DeepSeek API Key</string>
+    <string name="deepseek_api_help" translatable="false">https://api-docs.deepseek.com/</string>
+    <string name="deepseek_chat">DeepSeek Chat</string>
+    <string name="deepseek_chat_description"> A versatile conversational AI model optimized for natural, context-aware interactions in customer service, assistance, and multi-turn dialogues.</string>
+    <string name="deepseek_reasoner">DeepSeek Reasoner</string>
+    <string name="deepseek_reasoner_description">A specialized model focused on logical analysis and multi-step problem-solving, excelling in mathematical, strategic, and complex reasoning tasks.</string>
+    <string name="deepseek_setting">DeepSeek</string>
+    <string name="deepseek_brand_text" translatable="false">Powered by DeepSeek</string>
 </resources>
